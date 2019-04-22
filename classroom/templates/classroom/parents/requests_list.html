@@ -1,0 +1,58 @@
+{% extends 'base_parent.html' %}
+
+{% block content %}
+
+
+  <h2 class="mb-3">Request list</h2>
+  <div class="card">
+    <table class="table mb-0">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Noted</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for request in requests %}
+          <div class="modal fade" id="myModal-{{request.id}}" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">{{request.title}}</h4>
+              <p>-{{request.owner.firstName}} {{request.owner.lastName}}</p>
+            </div>
+            <div class="modal-body">
+              {{request.description}}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+      </div>
+    </div>
+          <tr>
+           <td class="align-middle">
+            <a href="#aboutModal" data-toggle="modal" data-target="#myModal-{{request.id}}">
+            {{request.title}}</a></td>
+           <td class="align-middle">{{request.description}}</td>
+           <td class="align-middle">{% if request.noted %}
+              <p>&#9989;</p>
+              {% else %}
+              <p>&#10060;</p>
+              {% endif %}</td> 
+            {% if user.is_admin %}
+              <td class="align-middle">{{request.owner.firstName}} {{request.owner.lastName}}</td>
+            {% endif %}
+          </tr>
+          {% empty %}
+          <tr>
+            <td class="bg-light text-center font-italic" colspan="5">No Requests yet !</td>
+          </tr>
+        {% endfor %}
+        <tr><a href="{% url 'parents:request_create' %}" class="btn btn-outline-success" role="button">Create Request</a></tr>
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

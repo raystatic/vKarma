@@ -1,0 +1,30 @@
+{% extends 'base_student.html' %}
+{% include 'classroom/students/_header.html' with active='new' %}
+{% block content %}
+  <div class="card">
+    <table class="table mb-0">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Test name</th>
+          <th>Marks scored</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in marks %}
+          <tr>
+          <td class="align-middle">{{ m.test.subject }}</td>
+            <td class="align-middle"><!-- <a href="{% url 'students:chart' m.Scored_marks %}"> -->{{ m.test.name }}<!-- </a> --></td>  
+            <td class="align-middle">{{ m.Scored_marks }}</td>
+          <td class="align-middle">{{ m.test.Total_marks }}</td>
+          </tr>
+        {% empty %}
+        <tr>
+            <td class="bg-light text-center font-italic" colspan="5">You don't have any marks alloted.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
