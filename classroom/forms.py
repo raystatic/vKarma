@@ -306,7 +306,7 @@ class HomeworkCreateForm(forms.ModelForm):
     def save(self, user):
         owner = user
         school = user.school
-        issue_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        issue_date = datetime.datetime.now().strftime('%Y-%m-%d')
         name = self.cleaned_data['name']
         subject = self.cleaned_data['subject']
         description = self.cleaned_data['description']

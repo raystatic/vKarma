@@ -1,0 +1,405 @@
+1. Write a function that 
+a. returns the largest element in a vector of numbers.
+b. returns the sum of the even numbers from a vector of numbers. 
+c. searches a number from a vector of numbers. 
+d. finds the factorial of a number. 
+e. finds the mean and standard deviation of a vector of numbers. 
+f. finds whether the number is prime or not. 
+g. returns the sum of the digits of a number.
+
+
+x <- c(2,5,3,9,8,11,6)
+max <- 0
+for (val in x) {
+  if(val > max) 
+    max = val
+}	
+print(max)
+
+
+x <- c(2,5,3,9,8,11,6) 
+count <- 0
+for (val in x) {
+  if(val %% 2 == 0) 
+    count= count+val
+}
+print(count)
+
+
+number <- readline(prompt="Enter no. = " )
+number <- as.integer(number)	
+x <- c(2,5,3,9,8,11,6)
+flag <- 0
+for (val in x) {
+  if(val == number )
+  {flag = 1 
+  print( "found ")}	
+}	
+if(flag == 0)
+  print("not found ")
+
+
+number <- readline(prompt="Enter no. = " )
+number <- as.integer(number)
+fact <- 1
+while(number > 0) {
+  fact = fact * number
+  number = number-1
+}
+print(fact)
+
+
+x <- c(2,5,3,9,8,11,6) 
+sum <- 0
+result <- 0
+for (val in x) 
+  sum = sum+val
+mean = sum/length(x)
+print(paste("MEAN: " , mean ))
+for (val in x)
+{
+  result = val-mean
+  val = result*result
+}
+for (val in x) 
+  sum = sum+val
+mean = sum/length(x)
+mean = sqrt(mean)
+print(paste("Standard Deviation: " , mean )) 
+
+
+
+number <- readline(prompt="Enter no. = " )
+number <- as.integer(number)
+i<- 2
+flag <- 0
+while( i <(number/2) )
+{ 
+  if ( (number %% i) == 0)
+  { print ("NOT PRIME")
+    flag = 1
+    break
+  }  
+  i=i+1
+}
+if ( flag == 0 )
+  print ("PRIME")
+
+
+number <- readline(prompt="Enter no. = " )
+number <- as.integer(number)
+num <- 0
+sum <- 0
+while ( number >= 1 )
+{
+  num = number %% 10
+  num <- as.integer(num)
+  number = number/10
+  sum = sum + num
+}
+print(sum)
+
+
+2. Let x=seq(from=-2,to=2,by=.1). Generate different subplots (2*2 matrix) for
+ a) y=x^3,
+ b) y= -x^3, 
+c) y=(2x-1)^3, 
+d) y=2*x^3-1. 
+Keep same limits for x and y axis say -100 to 100 for both.
+
+x=seq(-2,2,0.1)
+y1=x^3
+y2= (-x)^3
+y3=((2*x)-1)^3
+y4=((2*(x^3))-1)
+
+plot(x,y1)
+plot(x,y2)
+plot(x,y3)
+plot(x,y4)
+
+
+3. Use Boston housing data from MASS library as a dataset. Consider 70% of its data for training and rest for the testing. 
+a. Predict 'median value of owner-occupied homes' (i.e. medv) using 'lower status of the population' (i.e. lstat) using linear regression (gradient descent). Generate two subplots to show: 1) Predicted values of medv against the original medv values of test dataset, 2) medv against lstat. (Note: Do not use inbuilt function).
+ b. Predict 'median value of owner-occupied homes' (i.e. medv) using 'lower status of the population' (i.e. lstat) using linear regression. Generate two subplots to show: 1) Predicted values of medv against the original medv values of test dataset, 2) medv against lstat. (You may use inbuilt function). 
+c. Predict 'median value of owner-occupied homes' (i.e. medv) using all the other attributes excluding 'age' attribute using multivariate linear regression and report the error percentage for the test dataset. (You may use inbuilt function).
+ d. Scale the data by any means before proceeding further. Learn the model using training data to predict medv from all the other attributes using neural network. Plot the learnt neural network. Predict the medv values for the test dataset. (You may use inbuilt function).
+
+install.packages('readr')
+install.packages('ggplot2')
+install.packages('mlbench')
+install.packages('corrplot')
+install.packages('Amelia')
+install.packages('caret')
+install.packages('plotly')
+install.packages('caTools')
+install.packages('reshape2')
+install.packages('dplyr')
+
+library(readr)
+library(ggplot2)
+library(corrplot)
+library(mlbench)
+library(Amelia)
+library(plotly)
+library(reshape2)
+library(caret)
+library(caTools)
+library(dplyr)
+
+#mlbench package
+data(BostonHousing)
+housing <- BostonHousing
+
+# str(housing)
+
+#Amelia package
+missmap(housing,col=c('yellow','black'),y.at=1,y.labels='',legend=TRUE)
+
+#caTools
+split <- sample.split(housing,SplitRatio =0.70)
+train <- subset(housing,split==TRUE)
+test <- subset(housing,split==FALSE)
+
+#training model
+model <- lm(medv ~ lstat, data = train)
+summary(model)
+plot(model)
+
+#testing
+test$predicted.medv <- predict(model,test)
+
+pl1 <-test %>% 
+  ggplot(aes(medv,predicted.medv)) +
+  geom_point(alpha=0.5) + 
+  stat_smooth(aes(colour='black')) +
+  xlab('Actual value of medv') +
+  ylab('Predicted value of medv')+
+  theme_bw()
+
+ggplotly(pl1)
+
+
+#part c all attributes excluding age
+
+model <- lm(medv ~.-age, data = train)
+summary(model)
+plot(model)
+
+#testing
+test$predicted.medv <- predict(model,test)
+
+
+pl2 <-test %>% 
+  ggplot(aes(medv,predicted.medv)) +
+  geom_point(alpha=0.5) + 
+  stat_smooth(aes(colour='black')) +
+  xlab('Actual value of medv') +
+  ylab('Predicted value of medv')+
+  theme_bw()
+
+ggplotly(pl2)
+
+
+#part a
+
+gradientDesc <- function(x, y, learn_rate, conv_threshold, n, max_iter) {
+  plot(x, y, col = "blue", pch = 20)
+  m <- runif(1, 0, 1)
+  c <- runif(1, 0, 1)
+  yhat <- m * x + c
+  MSE <- sum((y - yhat) ^ 2) / n
+  converged = F
+  iterations = 0
+  while(converged == F) {
+    ## Implement the gradient descent algorithm
+    m_new <- m - learn_rate * ((1 / n) * (sum((yhat - y) * x)))
+    c_new <- c - learn_rate * ((1 / n) * (sum(yhat - y)))
+    m <- m_new
+    c <- c_new
+    yhat <- m * x + c
+    MSE_new <- sum((y - yhat) ^ 2) / n
+    if(MSE - MSE_new <= conv_threshold) {
+      abline(c, m) 
+      converged = T
+      return(paste("Optimal intercept:", c, "Optimal slope:", m))
+    }
+    iterations = iterations + 1
+    if(iterations > max_iter) { 
+      abline(c, m) 
+      converged = T
+      return(paste("Optimal intercept:", c, "Optimal slope:", m))
+    }
+  }
+}
+
+
+# Run the function 
+gradientDesc(test$lstat, test$medv, 0.0000293, 0.001, 32, 2500000)
+
+
+#neural network
+data<-housing
+apply(data,2,function(x) sum(is.na(x)))
+
+index <- sample(1:nrow(data),round(0.75*nrow(data)))
+train <- data[index,]
+test <- data[-index,]
+lm.fit <- glm(medv~., data=train)
+summary(lm.fit)
+pr.lm <- predict(lm.fit,test)
+MSE.lm <- sum((pr.lm - test$medv)^2)/nrow(test)
+
+install.packages("neuralnet")
+library(neuralnet)
+
+n <- names(train)
+f <- as.formula(paste("medv ~", paste(n[!n %in% "medv"], collapse = " + ")))
+#f1<-model.matrix("~medv + crim + zn + indus + chas + nox + rm + age + dis + rad + tax + ptratio + b + lstat",data = train)
+nn <- neuralnet(medv ~ crim + zn + indus + nox + rm + age + dis + rad + 
+                  tax + ptratio + b + lstat,data=train,hidden=c(5,3),linear.output=T)
+plot(nn)
+pred<-compute(nn,test)
+print(pred)
+
+4. Use first 100 rows of Iris as a dataset (i.e. only setosa and versicolor but not virginica).
+   	Consider half of the data for training and rest for testing.
+	a. Learn the model using k-NN (k=5) from lengths and widths of sepals and petals of
+	   training data. Use the learnt model to predict the class labels for the test dataset	
+	   and report the accuracy. Note: Do not use inbuilt function for k-NN.
+	b. Learn the model using logistic regression from lengths and widths of sepals and petals of training data. Use the learnt model to predict the class labels for the test 		   dataset and report the accuracy. (You may use inbuilt function).
+
+data("iris")
+use_iris<-head(iris,100)
+set.seed(2)
+use_iris<- use_iris[sample(nrow(use_iris)),]
+train_d <- use_iris[1:as.integer(0.5*50),]
+test_d <- use_iris[as.integer(0.5*50 +1):50,]
+
+#euclidien distance
+eudis<-function(a,b){
+  d = 0
+  for(i in c(1:(length(a)-1) ))
+  {
+    d = d + (a[[i]]-b[[i]])^2
+  }
+  d = sqrt(d)
+  return(d)
+}
+
+#knn function
+knn_pred<-function(train,test,k){
+  classpred<-c()
+  for(i in c(1:nrow(test))){
+    edis<-c()
+    evar<-c()
+    s=0
+    vc=0
+    for(j in c(1:nrow(train))){
+      edis=c(edis,eudis(test[i,],train[j,]))
+      evar=c(evar,as.character(train[j,][5]))
+    }
+     #eu dataframe created with eu_char & eu_dist columns
+    eu <- data.frame(evar, edis)
+    eu <- eu[order(eu$edis),]       #sorting eu dataframe to gettop K neighbors
+    eu <- eu[1:k,]               #eu dataframe with top K neighbors
+    
+    for(m in c(1:nrow(eu))){
+      if(as.character(eu[m,"evar"]) == "setosa"){
+        s = s + 1
+      }
+      else
+        vc = vc + 1
+    }
+    
+    if(s > vc){          
+      classpred <- c(classpred, "setosa")
+    }
+    else {
+      classpred <- c(classpred, "Versicolor")
+    }
+  }
+  return(classpred) 
+}
+ 
+predictions <- knn_pred(train_d, test_d, 5) 
+test_d[,6] <- predictions
+
+#accuracy function
+accuracy <- function(test_data){
+  correct = 0
+  for(i in c(1:nrow(test_data))){
+    if(!(test_data[i,5] == test_data[i,6])){ 
+      correct = correct+1
+    }
+  }
+  accu = correct/nrow(test_data) * 100  
+  return(accu)
+}
+print("Accuracy of model is: ")
+print(accuracy(test_d))
+
+
+#Logistic Regression Model
+logitMod <- glm(Species ~ Sepal.Width + Sepal.Length + Petal.Width + Petal.Length,data = train_d, family = binomial)
+predictedY <- predict(logitMod, test_d, type="response")
+lr_data <- data.frame(predictedY,Species=test_d$Species)
+
+#Accuracy of logistic regression model
+acc<-function(lr_data){
+  right=0
+  for(i in c(1:nrow(lr_data))){
+    if(lr_data$predictedY<0 && lr_data$Species=="setosa")
+      right=right+1
+    else if(lr_data$predictedY>0 && lr_data$Species=="versicolor")
+      right=right+1
+  }
+  acculog = right/nrow(lr_data) * 100  
+  return(acculog)
+}
+lr_data
+print("Accuracy of model is: ")
+print(acc(lr_data))
+
+
+5. Write the code for finding the weights of a perceptron using perceptron training rule for
+implementing OR gate. Consider all initial weights as 0 and alpha=1. Do same for AND gate.
+
+signFunction<-function(y){
+  if(y>0){
+    return(1)
+  }else{
+    return(0)
+  }
+}
+
+GetWeightsUsingPerceptron<-function(myData,W,eta){
+  cat("                   x        w       net           out        target         newW\n")
+  repeat{
+    intialW= W
+    for(i in 1.4){
+      X = as.numeric(myData[1,1:3])
+      cat("Sample    ",i,":        ",X,"          ",W,"       " )
+      target = as.numeric(myData[i,4])
+      newW = NewWeights(X,W,target,eta)
+      cat(newW,"\n")
+      W=nnewW
+    }
+    cat("\n")
+    if(all(newW==intialW)){break}
+  }
+  return(W)
+}
+
+NewWeights<-function(X,W,target,eta){
+  net=sum(X*W)
+  output = signFunction(net)
+  if(target!=output){
+    w=w+eta*(target-output)*X
+  }
+  cat(net,"    ",output,"      ",target,"      ")
+  return(W)
+}
+w=GetWeightsUsingPerceptron(myData,c(0,0,0),1)
+
+
